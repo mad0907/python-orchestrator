@@ -19,7 +19,7 @@ Run multi-agent workflows
 All using FastAPI + Python.
 
 🗂 Folder Structure
-PYORCHESTRATOR/
+python-orchestrator/
 │
 ├── orchestrator/      ← Control Room
 │   ├── main.py
