@@ -1,0 +1,37 @@
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: pyorch-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: pyorch
+      POSTGRES_PASSWORD: pyorch
+      POSTGRES_DB: pyorch
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pyorch"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  orchestrator:
+    build: .
+    container_name: pyorch-api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://pyorch:pyorch@postgres:5432/pyorch
+    ports:
+      - "8000:8000"
+    command: uvicorn orchestrator.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+
+volumes:
+  pgdata:
